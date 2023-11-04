@@ -12,9 +12,11 @@
 #include "ofSoundPlayer.h"
 #include "ofMesh.h"
 #include "ofShader.h"
+#include "ofUtils.h"
 
 #include "ofJson.h"
 #include "ofXml.h"
+
 
 namespace ofx {
     namespace UserDefinedLiterals {
@@ -54,6 +56,31 @@ namespace ofx {
             ofXml xml;
             xml.load(std::string{str});
             return std::move(xml);
+        }
+
+        struct VAArgsFormatter {
+            std::string format;
+            VAArgsFormatter(const std::string &format)
+            : format{format} {};
+            VAArgsFormatter(std::string &&format)
+            : format{std::move(format)} {};
+
+            VAArgsFormatter(const VAArgsFormatter &) = default;
+            VAArgsFormatter(VAArgsFormatter &&) = default;
+
+            VAArgsFormatter& operator=(const VAArgsFormatter &) = default;
+            VAArgsFormatter& operator=(VAArgsFormatter &&) = default;
+
+            template <typename ... arguments>
+            inline std::string operator()(arguments && ... args) const {
+                return ofVAArgsToString(format.c_str(), std::forward<arguments>(args) ...);
+            }
+        private:
+            VAArgsFormatter() = delete;
+        };
+
+        VAArgsFormatter operator"" _fmt(const char* format, std::size_t length) {
+            return { std::string{format} };
         }
     };
 };
