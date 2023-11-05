@@ -110,6 +110,9 @@ namespace ofx {
             ofBuffer operator"" _b(const char* str, std::size_t length) {
                 return { str, length };
             }
+            ofBuffer operator"" _bf(const char* str, std::size_t length) {
+                return ofBufferFromFile(std::string{str, length});
+            }
         }
 
         inline namespace file {
