@@ -9,6 +9,7 @@
 
 #include "ofVectorMath.h"
 #include "ofColor.h"
+#include "ofPixels.h"
 #include "ofImage.h"
 #include "ofVideoPlayer.h"
 #include "ofSoundPlayer.h"
@@ -64,7 +65,7 @@ namespace ofx {
             ofVideoPlayer operator"" _v(const char* str, std::size_t length) {
                 ofVideoPlayer player;
                 player.load(std::string{str});
-                return std::move(player);
+                return player;
             }
         }
         
@@ -72,7 +73,7 @@ namespace ofx {
             ofSoundPlayer operator"" _a(const char* str, std::size_t length) {
                 ofSoundPlayer player;
                 player.load(std::string{str});
-                return std::move(player);
+                return player;
             }
         }
         
@@ -80,7 +81,7 @@ namespace ofx {
             ofMesh operator"" _m(const char* str, std::size_t length) {
                 ofMesh mesh;
                 mesh.load(std::string{str});
-                return std::move(mesh);
+                return mesh;
             }
         }
         
@@ -88,7 +89,7 @@ namespace ofx {
             ofShader operator"" _s(const char* str, std::size_t length) {
                 ofShader shader;
                 shader.load(std::string{str});
-                return std::move(shader);
+                return shader;
             }
         }
         
@@ -102,7 +103,7 @@ namespace ofx {
             ofXml operator"" _x(const char* str, std::size_t length) {
                 ofXml xml;
                 xml.load(std::string{str});
-                return std::move(xml);
+                return xml;
             }
         }
         
