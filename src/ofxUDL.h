@@ -144,10 +144,26 @@ namespace ofx {
                 
                 template <typename ... arguments>
                 inline std::string operator()(arguments && ... args) const {
-                    return ofVAArgsToString(format.c_str(), std::forward<arguments>(args) ...);
+                    return ofVAArgsToString(format.c_str(), conv_str(std::forward<arguments>(args)) ...);
                 }
             private:
                 VAArgsFormatter() = delete;
+                
+                template <typename string_t>
+                static auto conv_str(string_t &&str)
+                    -> typename std::enable_if<
+                        std::is_same<string_t, std::string>::value,
+                        const char  *
+                    >::type
+                { return str.c_str(); }
+                
+                template <typename type>
+                static auto conv_str(type &&v)
+                    -> typename std::enable_if<
+                        !std::is_same<type, std::string>::value,
+                        type
+                    >::type
+                { return std::forward<type>(v); }
             };
             
             VAArgsFormatter operator"" _fmt(const char* format, std::size_t length) {
