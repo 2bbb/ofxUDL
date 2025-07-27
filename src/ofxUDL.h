@@ -17,9 +17,15 @@
 #include "ofShader.h"
 #include "ofUtils.h"
 #include "ofFileUtils.h"
+#include "ofSystemUtils.h"
+#include "ofURLFileLoader.h"
 
 #include "ofJson.h"
 #include "ofXml.h"
+
+#include <sstream>
+#include <fstream>
+#include <regex>
 
 namespace ofx {
     namespace UserDefinedLiterals {
@@ -115,7 +121,16 @@ namespace ofx {
                 return ofBufferFromFile(std::string{str, length});
             }
         }
-
+        
+        inline namespace datapath {
+            std::string operator"" _datapath(const char* str, std::size_t length) {
+                return ofToDataPath(str);
+            }
+            std::string operator"" _abspath(const char* str, std::size_t length) {
+                return ofToDataPath(str, true);
+            }
+        }
+        
         inline namespace file {
             ofFile operator"" _f(const char* str, std::size_t length) {
                 return { std::string{str} };
@@ -179,6 +194,95 @@ namespace ofx {
                 return ofRandom(v);
             }
         }
+        
+        inline namespace regex {
+            std::regex operator""_re(const char* str, std::size_t length) {
+                return std::regex{str};
+            }
+        }
+        
+        inline namespace stringstream {
+            std::stringstream operator""_ss(const char* str, std::size_t length) {
+                return std::stringstream{str};
+            }
+            
+            std::ostringstream operator""_oss(const char* str, std::size_t length) {
+                return std::ostringstream{str};
+            }
+            
+            std::istringstream operator""_iss(const char* str, std::size_t length) {
+                return std::istringstream{str};
+            }
+        }
+        
+        inline namespace fstream {
+            std::fstream operator""_fs(const char* str, std::size_t length) {
+                return std::fstream{str};
+            }
+            std::ofstream operator""_ofs(const char* str, std::size_t length) {
+                return std::ofstream{str};
+            }
+            std::ifstream operator""_ifs(const char* str, std::size_t length) {
+                return std::ifstream{str};
+            }
+        }
+        
+        inline namespace file {
+            FILE *operator""_fw(const char* str, std::size_t length) {
+                return fopen(str, "w");
+            }
+            FILE *operator""_fwp(const char* str, std::size_t length) {
+                return fopen(str, "w+");
+            }
+            FILE *operator""_fwb(const char* str, std::size_t length) {
+                return fopen(str, "wb");
+            }
+            FILE *operator""_fwbp(const char* str, std::size_t length) {
+                return fopen(str, "wb+");
+            }
+            FILE *operator""_fr(const char* str, std::size_t length) {
+                return fopen(str, "r");
+            }
+            FILE *operator""_frp(const char* str, std::size_t length) {
+                return fopen(str, "r+");
+            }
+            FILE *operator""_frb(const char* str, std::size_t length) {
+                return fopen(str, "rb");
+            }
+            FILE *operator""_frbp(const char* str, std::size_t length) {
+                return fopen(str, "rb+");
+            }
+            FILE *operator""_fa(const char* str, std::size_t length) {
+                return fopen(str, "a");
+            }
+            FILE *operator""_fap(const char* str, std::size_t length) {
+                return fopen(str, "a+");
+            }
+            FILE *operator""_fab(const char* str, std::size_t length) {
+                return fopen(str, "ab");
+            }
+            FILE *operator""_fabp(const char* str, std::size_t length) {
+                return fopen(str, "ab+");
+            }
+        }
+        
+        inline namespace systemutils {
+            void operator""_alert(const char* str, std::size_t length) {
+                ofSystemAlertDialog(str);
+            }
+            ofFileDialogResult operator""_load_file(const char* str, std::size_t length) {
+                return ofSystemLoadDialog(str);
+            }
+            std::string operator""_textbox(const char* str, std::size_t length) {
+                return ofSystemTextBoxDialog(str);
+            }
+        };
+        
+        inline namespace urlfileloader {
+            ofHttpResponse operator""_load_url(const char* url, std::size_t length) {
+                return ofLoadURL(url);
+            }
+        };
         
         inline namespace range {
             struct range_iterator_object {
